@@ -10,7 +10,7 @@
       "name": "storeforge",
       "description": "电商平台开发插件，通过 Harness Engineering 硬约束机制确保 AI 代理走正确的技术路径",
       "category": "development",
-      "source": ".",
+      "source": "./",
       "homepage": "https://github.com/PineappleBond/storeforge"
     }
   ]
