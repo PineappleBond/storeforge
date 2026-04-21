@@ -1,0 +1,132 @@
+#!/usr/bin/env bash
+# SessionStart Hook: 分层注入 P0 规则 + 完整文件索引 + 知识库查询指引
+# 采用 JSON 输出格式，兼容 Claude Code 的 hookSpecificOutput 协议
+
+set -euo pipefail
+
+# 动态获取插件根目录
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PLUGIN_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
+
+# === P0 强制加载 ===
+
+p0_rules="## StoreForge 简介
+
+StoreForge 是 Claude Code 电商开发插件，内置大厂电商开发经验，通过 Harness Engineering 硬约束机制强制 Agent 走正确技术路径。采用 skills + agents + hooks + commands 架构，覆盖 Golang/go-zero 后端、Vue3/ElementPlus 管理后台、Next.js/shadcn 官网、Flutter 5 端 App。
+
+## 核心规则（P0 强制，不得跳过）
+
+### 工作流规则
+1. 必须先计划再写代码：调用 storeforge-writing-plans 生成计划
+2. 必须用 TodoWrite 跟踪进度：每个子任务对应一个条目
+3. 完成前必须验证：调用 storeforge-verification 检查清单
+
+### 电商金额规范
+- 金额一律 int64（分），禁止 float/double
+- 金额计算必须指定舍入规则：ROUND_HALF_UP
+- 多币种必须带 currency_code
+
+### 订单状态机原则
+- 状态转换必须经过合法路径，禁止随意跳转
+- 详见 knowledge/ecommerce-patterns/order-state-machine.md
+
+### 认证授权原则
+- JWT 必须 RS256/ES256，禁止 HS256
+- Admin 与 User 角色严格分离
+- Token 必须支持撤销
+"
+
+# === P1 完整文件索引 ===
+
+p1_index="## Skills（13 个，按需调用）
+
+### 工作流 Skills
+| Skill | 触发时机 |
+|-------|---------|
+| storeforge-using | 所有任务起点，session-start hook 注入此 skill |
+| storeforge-brainstorm | 新需求/新项目启动，分析需求生成技术方案 |
+| storeforge-writing-plans | 脑暴完成后，将技术方案转为可执行任务列表 |
+| storeforge-executing | 用户确认计划后，按依赖顺序执行子任务 |
+| storeforge-verification | 每个子任务完成后、标记完成前的最终验证 |
+| storeforge-review | 所有任务完成后，5 代理并行多轮审查 |
+| storeforge-testing | 每个子任务完成后，L1/L2/L3 三层测试 |
+
+### Domain Skills（硬约束）
+| Skill | 触发时机 |
+|-------|---------|
+| storeforge-domain-backend | 涉及 Golang + go-zero 后端开发时 |
+| storeforge-domain-admin | 涉及 Vue 3 + Element Plus 管理后台时 |
+| storeforge-domain-website | 涉及 Next.js + shadcn/ui 官网时 |
+| storeforge-domain-flutter | 涉及 Flutter 5 端 App 时 |
+
+### 机制 Skills
+| Skill | 触发时机 |
+|-------|---------|
+| storeforge-harness | 子任务开发完成后自动触发，约束检查 |
+| storeforge-user-decision | 遇到产品/业务问题时，区分技术/产品问题 |
+
+## Commands（5 个，/sf: 前缀）
+/sf:brainstorm — 电商项目脑暴
+/sf:review — 多代理代码审查
+/sf:test — 三层测试执行
+/sf:plan — 生成实施计划
+/sf:verify — 完成前验证
+
+## Agents（5 个，storeforge-review 中并行调用）
+- storeforge-architect — 架构审查：状态机闭环、幂等、防超卖、Saga、模块边界
+- storeforge-security-auditor — 安全审查：支付验签、敏感信息加密、JWT、SQL 注入、Rate Limit
+- storeforge-performance-reviewer — 性能审查：N+1 查询、Redis 缓存、CDN、分页、连接池
+- storeforge-api-contract-checker — API 契约：前后端字段对齐、枚举一致、错误码统一
+- storeforge-testing-validator — 测试验证：覆盖率、异常场景、测试反模式
+
+## 知识库索引（19 个 pattern 文件，按需 Read）
+
+### 核心电商模式（11 个）
+| 文件 | 查询时机 |
+|------|---------|
+| auth-patterns.md | 实现登录/注册/OAuth/Token 刷新/撤销时 |
+| payment-patterns.md | 对接微信/支付宝/抖音支付、回调验签、退款时 |
+| cart-patterns.md | 实现购物车增删改、离线缓存、跨端同步、失效标记时 |
+| inventory-patterns.md | 库存扣减、防超卖、Redis Lua 脚本、秒杀预扣时 |
+| order-state-machine.md | 订单创建、状态流转、超时取消、退款/退货时 |
+| promotion-patterns.md | 优惠券、满减、限时折扣、拼团、互斥规则、计算引擎时 |
+| search-patterns.md | 商品搜索、分词、拼写纠错、搜索建议、缓存时 |
+| shipping-patterns.md | 物流接入、运费计算、面单生成、轨迹查询时 |
+| flash-sale-pattern.md | 秒杀/闪购、预售 Token、Redis 预热、限流排队、降级时 |
+| image-cdn-pattern.md | 图片上传、CDN 策略、WebP/AVIF 转换、响应式图片、防 SSRF 时 |
+| error-codes-registry.md | 新增/使用错误码时，确保 {MODULE}_{SEQ} 命名空间一致 |
+
+### 扩展电商模式（8 个）
+| 文件 | 查询时机 |
+|------|---------|
+| admin-permission.md | 后台 RBAC 权限、数据权限隔离、操作审计、多租户时 |
+| analytics-patterns.md | 销售报表、用户行为分析、漏斗分析、A/B 测试、经营看板时 |
+| cms-i18n.md | 内容多语言、富文本管理、Banner 配置、货币转换时 |
+| customer-service.md | 在线客服、工单系统、AI 智能客服、会话分配、满意度评价时 |
+| file-system.md | 文件上传下载、对象存储、分片上传、预签名 URL、文件类型检测时 |
+| invoice-patterns.md | 电子发票开具、PDF 生成、红冲/作废、税务计算时 |
+| risk-control.md | 防刷单、设备指纹、黑名单、异常交易检测、风控规则时 |
+| ai-eino.md | AI 客服集成、Tool Calling、LLM Wiki 知识库、智能问答时 |
+
+---
+完整约束请在调用对应 skill 时加载。涉及具体实现细节时，Read 对应的 knowledge pattern 文件。
+"
+
+# 合并为完整内容
+full_content="${p0_rules}${p1_index}"
+
+# JSON 转义函数
+escape_for_json() {
+    local s="$1"
+    s="${s//\\/\\\\}"
+    s="${s//\"/\\\"}"
+    s="${s//$'\n'/\\n}"
+    s="${s//$'\r'/\\r}"
+    s="${s//$'\t'/\\t}"
+    printf '%s' "$s"
+}
+
+escaped_content=$(escape_for_json "$full_content")
+
+# 输出 Claude Code hook 协议格式
+printf '{\n  "hookSpecificOutput": {\n    "hookEventName": "SessionStart",\n    "additionalContext": "%s"\n  }\n}\n' "$escaped_content"

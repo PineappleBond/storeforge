@@ -1,0 +1,13 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|clear|compact",
+        "type": "command",
+        "command": "bash",
+        "args": ["hooks/session-start"],
+        "async": false
+      }
+    ]
+  }
+}

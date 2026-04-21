@@ -1,0 +1,44 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Node
+node_modules/
+
+# Build output
+dist/
+build/
+.next/
+out/
+
+# Flutter
+*.apk
+*.ipa
+*.aab
+*.so
+build/
+.flutter-plugins*
+*.freezed.dart
+*.g.dart
+
+# Go
+*.exe
+*.test
+coverage.out
+
+# Secrets
+*.env
+*.pem
+*.key
+!.gitignore
+
+# Worktrees (if left behind)
+../worktrees/
+.review*
