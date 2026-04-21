@@ -95,18 +95,22 @@ flowchart LR
 
 ### Installation
 
+Install via Claude Code plugin marketplace (recommended):
+
 ```bash
-# Clone the repository
-git clone https://github.com/PineappleBond/storeforge.git
+# Add marketplace (one-time setup)
+claude plugin marketplace add https://github.com/PineappleBond/storeforge.git
 
-# Install as a Claude Code plugin
-# Method 1: via .claude/plugins directory
-mkdir -p ~/.claude/plugins
-ln -s /path/to/storeforge ~/.claude/plugins/storeforge
-
-# Method 2: via Claude Code plugin management
-/plugin install /path/to/storeforge
+# Install the plugin
+claude plugin install storeforge
 ```
+
+> The plugin installs from the `main` branch by default. For the latest in-development features, switch to `dev` after installation:
+>
+> ```bash
+> cd ~/.claude/plugins/cache/storeforge/storeforge/0.1.0
+> git checkout dev
+> ```
 
 After installation, P0 rules are automatically injected at every session start.
 

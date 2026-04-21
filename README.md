@@ -95,18 +95,22 @@ flowchart LR
 
 ### 安装
 
+通过 Claude Code 插件市场安装（推荐）：
+
 ```bash
-# 克隆仓库
-git clone https://github.com/PineappleBond/storeforge.git
+# 添加 marketplace（只需执行一次）
+claude plugin marketplace add https://github.com/PineappleBond/storeforge.git
 
-# 在 Claude Code 中安装插件（根据你的 Claude Code 版本选择方式）
-# 方式 1：通过 .claude/plugins 目录
-mkdir -p ~/.claude/plugins
-ln -s /path/to/storeforge ~/.claude/plugins/storeforge
-
-# 方式 2：通过 Claude Code 插件管理命令
-/plugin install /path/to/storeforge
+# 安装插件
+claude plugin install storeforge
 ```
+
+> 插件默认安装到 `main` 分支。如需体验开发中的最新功能，可在安装后切换到 `dev` 分支：
+>
+> ```bash
+> cd ~/.claude/plugins/cache/storeforge/storeforge/0.1.0
+> git checkout dev
+> ```
 
 安装后，P0 规则会在每次会话启动时自动注入。
 
