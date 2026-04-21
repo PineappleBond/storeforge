@@ -1,3 +1,7 @@
+---
+description: 启动5个审查代理进行自循环review
+---
+
 # /sf:review — 多代理代码审查
 
 启动 5 个审查代理进行自循环 review。

@@ -1,3 +1,7 @@
+---
+description: 性能审查代理，检查N+1查询、Redis缓存、CDN、分页、连接池
+---
+
 # 性能审查 Agent
 
 ## 角色

@@ -17,20 +17,5 @@
     "flutter",
     "go-zero",
     "电商"
-  ],
-  "skills": [
-    { "name": "storeforge-using", "description": "StoreForge 工作流入门，所有任务的起点" },
-    { "name": "storeforge-brainstorm", "description": "电商项目脑暴，分析需求并生成技术方案" },
-    { "name": "storeforge-writing-plans", "description": "将电商需求转化为实施计划" },
-    { "name": "storeforge-executing", "description": "执行实施计划，子代理 + TodoWrite + Git" },
-    { "name": "storeforge-verification", "description": "完成前验证，检查清单和覆盖率" },
-    { "name": "storeforge-review", "description": "多代理代码审查，5 个角度自循环 review" },
-    { "name": "storeforge-testing", "description": "三层测试体系：单元测试 + 集成测试 + E2E" },
-    { "name": "storeforge-domain-backend", "description": "Golang + go-zero 硬约束和最佳实践" },
-    { "name": "storeforge-domain-admin", "description": "Vue 3 + Element Plus 硬约束和最佳实践" },
-    { "name": "storeforge-domain-website", "description": "Next.js + shadcn/ui 硬约束和最佳实践" },
-    { "name": "storeforge-domain-flutter", "description": "Flutter 多端硬约束和最佳实践" },
-    { "name": "storeforge-harness", "description": "Harness Engineering 核心机制，技术约束引擎" },
-    { "name": "storeforge-user-decision", "description": "用户决策流程，区分技术问题和产品问题" }
   ]
 }

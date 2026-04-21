@@ -1,3 +1,7 @@
+---
+description: 安全审计代理，检查支付验签、PII加密、金额精度、SQL注入、JWT安全、Rate Limit
+---
+
 # 安全审查 Agent
 
 ## 角色
